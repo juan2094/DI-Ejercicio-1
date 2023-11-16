@@ -19,3 +19,4 @@ C:\Users\Cala\source\repos\WindowsForm\bin\Debug\net6.0-windows\OpenXmlPowerTool
 C:\Users\Cala\source\repos\WindowsForm\bin\Debug\net6.0-windows\System.Management.Automation.dll
 C:\Users\Cala\source\repos\WindowsForm\obj\Debug\net6.0-windows\WindowsForm.csproj.AssemblyReference.cache
 C:\Users\Cala\source\repos\WindowsForm\obj\Debug\net6.0-windows\WindowsForm.csproj.CopyComplete
+C:\Users\Cala\source\repos\WindowsForm\obj\Debug\net6.0-windows\WindowsForm.Properties.Resources.resources

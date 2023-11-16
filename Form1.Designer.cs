@@ -69,10 +69,11 @@
             // 
             // afoto
             // 
+            afoto.BackgroundImageLayout = ImageLayout.Stretch;
             afoto.Location = new Point(383, 51);
             afoto.Name = "afoto";
             afoto.Size = new Size(336, 204);
-            afoto.SizeMode = PictureBoxSizeMode.Zoom;
+            afoto.SizeMode = PictureBoxSizeMode.StretchImage;
             afoto.TabIndex = 2;
             afoto.TabStop = false;
             // 
@@ -191,6 +192,8 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.FromArgb(199, 199, 199);
+            BackgroundImageLayout = ImageLayout.Stretch;
             ClientSize = new Size(800, 450);
             Controls.Add(btnOk);
             Controls.Add(txtMarca);

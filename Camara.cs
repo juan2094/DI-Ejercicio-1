@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 
 namespace WindowsForm
 {
-    internal class Camara
+    [Serializable]
+    internal class Camara 
     {
         public int index {  get; set; }
         public int numero
