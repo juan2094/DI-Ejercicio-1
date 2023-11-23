@@ -11,8 +11,9 @@ namespace WindowsForm
 {
     public partial class Form1 : Form
     {
+
+        //DECLARACION
         int index = 0;
-        // FileStream cargar = File.OpenRead("Fichero.txt");
         int numero;
         float precio;
         Boolean profesional = false;
@@ -20,24 +21,15 @@ namespace WindowsForm
         string marca;
         PictureBox pic;
 
-        // Pic.ImageLocation =  null;
+        
 
         List<Camara> lista = new List<Camara>();
 
-        // Camara c1 = new Camara(0, 2, (float)121.30, false, 'd', "Nisu", Image.FromFile("C:\\Users\\Cala\\source\\repos\\WindowsForm\\fotos\\cuerpo-de-la-c-mara-mirrorless-eos-r5-de-canon-producto-vista-frontal.jfif"));
-        /// Camara c2 = new Camara(1, 4, (float)12.33, false, '2', "Nisu", Image.FromFile("C:\\Users\\Cala\\source\\repos\\WindowsForm\\fotos\\images (1).jfif"));
-        // Camara c3 = new Camara(2, 6, (float)12.320, false, 'a', "N1su", Image.FromFile("C:\\Users\\Cala\\source\\repos\\WindowsForm\\fotos\\images.jfif"));
-        //Camara c4 = new Camara(3, 8, (float)123.30, false, 'b', "Nisu", Image.FromFile("C:\\Users\\Cala\\source\\repos\\WindowsForm\\fotos\\cuerpo-de-la-c-mara-mirrorless-eos-r5-de-canon-producto-vista-frontal.jfif"));
-
+        
         public Form1()
         {
+            //INICIAMOS LOS CAMPOS Y DESACTIVAMOS BTN_OK
             InitializeComponent();
-            //  lista.Add(c1);
-            //  lista.Add(c2);
-            //  lista.Add(c3);
-            // lista.Add(c4);
-
-            //DESACTIVAMOS EL BOTON NADA MAS INICIAR
             btnOk.Enabled = false;
             btnOk.Visible = false;
 
@@ -46,30 +38,30 @@ namespace WindowsForm
 
         private void button1_Click(object sender, EventArgs e)
         {
-
+            //LLAMADA A METODO
             retroceder();
 
         }
 
         private void Avanzar_Click(object sender, EventArgs e)
         {
+            //LLAMADA A METODO
             siguiente();
         }
 
         private void siguiente()
         {
-
+            //CONTROLAMOS SEGÚN EL ÍNDICE ESTÁTICO LA POSICIÓN DE LA LISTA QUE MOSTRAMOS
             if (index == lista.Count)
             {
                 btnAvanzar.Enabled = false;
             }
-
+            
             btnRetroceder.Enabled = true;
 
 
             if (lista.Count - 1 > index)
             {
-
                 index++;
                 Camara aux = lista[index];
                 mostrarDatos(aux);
@@ -98,13 +90,12 @@ namespace WindowsForm
 
         private void mostrarDatos(Camara aux)
         {
-
-
-            txtCalidad.Text = aux.calidad.ToString();
-            txtMarca.Text = aux.marca.ToString();
-            txtNumero.Text = aux.numero.ToString();
-            txtPrecio.Text = aux.precio.ToString();
-            if (aux.profesional)
+            txtCalidad.Text = aux.Calidad.ToString();
+            txtMarca.Text = aux.Marca.ToString();
+            txtNumero.Text = aux.Numero.ToString();
+            txtPrecio.Text = aux.Precio.ToString();
+            //mostramos los datos y compr
+            if (aux.Profesional)
             {
                 txtProfesional.Text = "Profesional";
             }
@@ -112,19 +103,21 @@ namespace WindowsForm
             {
                 txtProfesional.Text = "Aficionado";
             }
-            afoto.Image = aux.foto;
 
+            Image imagen = aux.GetFoto();
+            afoto.Image = imagen;
         }
 
         private void txtNumero_TextChanged(object sender, EventArgs e)
         {
-
+            //nada
         }
 
         private void btnEliminar_Click(object sender, EventArgs e)
         {
             if (index > -1)
             {
+                //eliminamos de la lista y controlando los errores 
                 lista.RemoveAt(index);
 
                 if (index != 0)
@@ -136,11 +129,12 @@ namespace WindowsForm
                 }
                 else
                 {
-                    if (lista[index] != null)
+                    if (index== 0)
                     {
                         Camara aux = lista[index];
                         mostrarDatos(aux);
                     }
+                    else
                     vaciarCampos();
 
                 }
@@ -173,38 +167,35 @@ namespace WindowsForm
 
         private void btnOk_Click(object sender, EventArgs e)
         {
-
             Image imagen = elegirArchivo();
-            Boolean profesional = false;
+            bool profesional = (txtCalidad.Text.Equals("Si", StringComparison.OrdinalIgnoreCase));
 
-            if (txtCalidad.Text == "Si" || txtCalidad.Text == "si")
-            {
-                profesional = true;
-            }
-            //creamos el objeto que recoge los datos proporcionados
+            // Creamos el objeto que recoge los datos proporcionados
             Camara aux = new Camara(index++, int.Parse(txtNumero.Text), float.Parse(txtPrecio.Text), profesional, char.Parse(txtCalidad.Text), txtMarca.Text, imagen);
-            //añadimos a la lista
+
+            // Añadimos a la lista
             lista.Add(aux);
 
             mostrarDatos(aux);
+
+            // Volvemos al estado anterior
             btnOk.Enabled = false;
             btnOk.Visible = false;
             btnEliminar.Enabled = true;
             btnAvanzar.Enabled = true;
             btnNuevo.Enabled = true;
             btnRetroceder.Enabled = true;
-            //volvemos al estado anterior
         }
 
         private Image elegirArchivo()
         {
+            //abrimos la ventana para elegir foto
             OpenFileDialog ofd = new OpenFileDialog();
 
             ofd.Title = "Elige una foto";
 
             if (ofd.ShowDialog() == DialogResult.OK)
             {
-
                 string path = ofd.FileName;
                 Image imagen = Image.FromFile(path);
                 ofd.Dispose();
@@ -221,87 +212,117 @@ namespace WindowsForm
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            //BUSCAMSO DONDE GUARDAR EL ARCHIVO
-            FolderBrowserDialog fd = new FolderBrowserDialog();
-            fd.ShowDialog();
 
+            Guardar("databank.data");
+
+        }
+
+
+        private void Guardar(string rutaArchivo)
+        {
             try
             {
-                string rutaCompleta = Path.Combine(fd.SelectedPath, "archivo.dat");
-                //RUTA COMPLETA CON UN NOMBRE YA DEFINIDO
-                FileStream fw = new FileStream(rutaCompleta, FileMode.Create);
-                //CREAMOS O SOBREESCRIBIMOS EL ARCHIVO
-                BinaryFormatter bf = new BinaryFormatter();
-                bf.Serialize(fw, lista);
-                //la serializamos
+                //con un binaryWriter sobreescribimos el archivo
+                using (BinaryWriter bw = new BinaryWriter(File.Open(rutaArchivo, FileMode.Create)))
+                {
+                    foreach (Camara a in lista)
+                    {
+                        bw.Write(a.Calidad);
+                        bw.Write(a.Marca);
+                        bw.Write(a.Profesional);
+                        //escribimos los datos y pasamos la foto al array de  bytes
+                        byte[] fotoBytes = a.GetFotoBytes();
+                        //guardamos el tamaño del array antes de la foto
+                        bw.Write(fotoBytes.Length);
+                        bw.Write(fotoBytes);
+                        //se guarda el array
+                        bw.Write(a.Index);
+                        bw.Write(a.Numero);
+                        bw.Write(a.Precio);
+                    }
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error al guardar el archivo: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            finally { fd.Dispose(); }
         }
-
 
         private void Cargar(string rutaArchivo)
         {
+            lista = CargarLista(rutaArchivo);
+        }
+
+        private List<Camara> CargarLista(string rutaArchivo)
+        {
+            List<Camara> listaCamaras = new List<Camara>();
+
             try
             {
-                BinaryFormatter formatter = new BinaryFormatter();
-                //USAMOS UN BINARYFORMATTER PARA DESERIALIZAR OBJETOS
-                using (FileStream fs = new FileStream(rutaArchivo, FileMode.OpenOrCreate))
+                using (BinaryReader br = new BinaryReader(File.Open(rutaArchivo, FileMode.Open)))
                 {
-                    //SE GUARDA EN LA LISTA ANTERIORMENTE DECLARADA
-                    lista = (List<Camara>)formatter.Deserialize(fs);
+                    while (br.BaseStream.Position < br.BaseStream.Length)
+                    {
+                        char calidad = br.ReadChar();
+                        string marca = br.ReadString();
+                        bool profesional = br.ReadBoolean();
+                        int fotoLength = br.ReadInt32();
+                        //ahora le podemos pasar el tamaño de la foto
+                        byte[] fotoBytes = br.ReadBytes(fotoLength);
+                        int index = br.ReadInt32();
+                        int numero = br.ReadInt32();
+                        float precio = br.ReadSingle();
+
+                        Camara camara = new Camara(index, numero, precio, profesional, calidad, marca, null);
+                        //añadimos la foto a posterior con el metodo que gemos creado
+                        camara.SetFotoBytes(byteArrayToImage(fotoBytes));
+                        listaCamaras.Add(camara);
+                    }
                 }
-
-
             }
             catch (Exception ex)
             {
-                //CONTROLAMOS LAS EXCEPCIONES
-                MessageBox.Show($"Error al deserializar el archivo: {ex.Message}");
-
+                MessageBox.Show($"Error al cargar el archivo: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
-            //INTENTOS ANTERIORES
-
-            /*
-            FolderBrowserDialog fd = new FolderBrowserDialog();
-            fd.ShowDialog();
-            List<Camara>  aux = new List<Camara>();
-
-            string[] archivos = Directory.GetFiles(fd.SelectedPath);
-            //Camara aux1 = (Camara)sr.CurrentEncoding.GetString;
-
-            OpenFileDialog ofd = new OpenFileDialog();
-
-            if (ofd.ShowDialog() == DialogResult.OK)
-            {
-                // Crear un formateador binario
-                BinaryFormatter formatter = new BinaryFormatter();
-
-                // Crear un flujo de archivo para leer el objeto
-                using (FileStream fs = new FileStream(ofd.FileName, FileMode.Open))
-                {
-                    // Deserializar la lista de cámaras desde el archivo
-                    lista = (List<Camara>)formatter.Deserialize(fs);
-                }
-
-                // Aquí puedes hacer algo con la lista de cámaras cargadas
-            }
-
-            */
+            return listaCamaras;
         }
 
+
+
+       
+
+        public Image byteArrayToImage(byte[] byteArrayIn)
+        {
+            MemoryStream ms = new MemoryStream(byteArrayIn);
+            Image returnImage = Image.FromStream(ms);
+            return returnImage;
+        }
         private void Form1_Load(object sender, EventArgs e)
         {
             OpenFileDialog open = new OpenFileDialog();
 
-            open.ShowDialog();
-
+           // open.ShowDialog();
+            if (open.ShowDialog() == DialogResult.OK) { 
+                //si seleccionamos el archivo lo cargamos
             Cargar(open.FileName);
-            mostrarDatos(lista[0]);
+            }else
+            //si no, cargamos estas por defecto
+            if (lista.Count==0)
+            {
+                Camara c1 = new Camara(0, 2, (float)121.30, false, 'd', "Nisu", ( Image.FromFile("C:\\Users\\Cala\\source\\repos\\WindowsForm\\fotos\\cuerpo-de-la-c-mara-mirrorless-eos-r5-de-canon-producto-vista-frontal.jfif")));
+                Camara c2 = new Camara(1, 4, (float)12.33, false, '2', "Nisu", (Image.FromFile("C:\\Users\\Cala\\source\\repos\\WindowsForm\\fotos\\images (1).jfif")));
+                Camara c3 = new Camara(2, 6, (float)12.320, false, 'a', "N1su", (Image.FromFile("C:\\Users\\Cala\\source\\repos\\WindowsForm\\fotos\\images.jfif")));
+                Camara c4 = new Camara(3, 8, (float)123.30, false, 'b', "Nisu", (Image.FromFile("C:\\Users\\Cala\\source\\repos\\WindowsForm\\fotos\\cuerpo-de-la-c-mara-mirrorless-eos-r5-de-canon-producto-vista-frontal.jfif")));
+                lista.Add(c1);
+                lista.Add(c2);
+                lista.Add(c3);
+                lista.Add(c4);
+               
+            }
+
+            
+            // mostrarDatos(lista[0]);
         }
     }
 
